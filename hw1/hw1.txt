@@ -1,0 +1,5 @@
+Please input your real name: Alfonso Miguel Santos-Tankia
+Please input your phone number: 3144430785
+Please input your address: 940 Warwick Lane, Ballwin, Missouri, 63011
+
+Hello Alfonso Miguel Santos-Tankia, your current address is 940 Warwick Lane, Ballwin, Missouri, 63011 and your phone number is 3144430785
