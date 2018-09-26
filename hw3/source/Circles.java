@@ -5,7 +5,7 @@
 
 //Note: To compile:     javac -d . <filepath>
 //      To run:         java code.Circles
-//      To create .jar: jar -cvfm Circles.jar Circles.txt *
+//      To create .jar: jar -cvfm Circles.jar manifest.txt *
 //      To run .jar:    <Double click on Circles.jar>
 //      To run .jar:    java -jar Circles.jar
 
@@ -31,7 +31,7 @@ public class Circles extends Application{
         int[] circleInputs = new int[6];
 
         try{
-            File txtFile = new File("source/inCircle.txt");
+            File txtFile = new File("source/inFile.txt");
             Scanner scan = new Scanner(txtFile);
             int i = 0;
             while(scan.hasNextLine()){
@@ -68,25 +68,33 @@ public class Circles extends Application{
 
         // CREATES CIRCLES
         root = new Pane();
-        createCircle(circleInputs[0], circleInputs[1], circleInputs[2], labelData);
-        createCircle(circleInputs[3], circleInputs[4], circleInputs[5], labelData);
+        createCircle(circleInputs, labelData);//circleInputs[0], circleInputs[1], circleInputs[2], labelData);
+        //createCircle(circleInputs[3], circleInputs[4], circleInputs[5], labelData);
         Scene scene = new Scene(root, 400, 400);
         stage.setScene(scene);
         stage.show();
         stage.setTitle("CS5405 HW3");
     }
 
-    public Circle createCircle(int centerX, int centerY, int radius, String labelData){
-        Circle circle = new Circle();
-        circle.setCenterX(centerX);
-        circle.setCenterY(centerY);
-        circle.setRadius(radius);
-        circle.setStroke(Color.BLUE);
-        circle.setFill(Color.CYAN);
+    public Circle createCircle(int[] circleInputs, String labelData){//int centerX, int centerY, int radius, String labelData){
+        Circle circle1 = new Circle();
+        circle1.setCenterX(circleInputs[0]);
+        circle1.setCenterY(circleInputs[1]);
+        circle1.setRadius(circleInputs[2]);
+        circle1.setStroke(Color.BLUE);
+        circle1.setFill(Color.CYAN);
+
+        Circle circle2 = new Circle();
+        circle2.setCenterX(circleInputs[3]);
+        circle2.setCenterY(circleInputs[4]);
+        circle2.setRadius(circleInputs[5]);
+        circle2.setStroke(Color.RED);
+        circle2.setFill(Color.PINK);
+
         // NEED TO SEE IF I CAN DELETE LABEL FROM HERE
         Label label = new Label(labelData);
-        root.getChildren().addAll(circle,label);
-        return circle;
+        root.getChildren().addAll(circle1,circle2,label);
+        return circle1;
 
     }
 }
