@@ -10,27 +10,52 @@
 //      To run .jar:    java -jar Demo.jar
 
 package code;
-// AUTHOR SHOULD SHOW WHEN APP IS OPENED!
-/*
-import javafx.application.Application;
+
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.control.Button;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.paint.Color;
+import javafx.scene.text.*;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
-import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class Demo extends Application{
-    Pane root;
+public class Demo extends Application {
 
-    @Override
+    Pane root = new Pane();
+
+    Pane authorPane = new Pane();
+    Button authorButton;
+    Text authorText1, authorText2, authorText3;
+
+    Pane descriptionPane = new Pane();
+    Button descriptionButton;
+    Text descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7;
+
+    Pane problemPane = new Pane();
+    Button problemButton;
+    Text problemText1;
+
+    Pane circlePane = new Pane();
+    Button circleButton;
+    Text circleText1;
+
+    Scene scene;
+    Stage stage;
+
+    String circleLabelData;
+    int[] circleInputs;
+
     public void start(Stage stage){
-        int[] circleInputs = new int[6];
-
+        //GET Circle Information
+        circleInputs = new int[6];
         try{
             File txtFile = new File("data/inFile.txt");
             Scanner scan = new Scanner(txtFile);
@@ -53,96 +78,28 @@ public class Demo extends Application{
         int absRadDiff = Math.abs(circleInputs[2] - circleInputs[5]);
         int radAdd = circleInputs[2] + circleInputs[5];
 
-        String labelData = "";
-        if(xySqrt ==radAdd ||  xySqrt == absRadDiff){
-            labelData = "The circles TOUCH";
-        }
         if(xySqrt > radAdd){
-            labelData = "The circles are DISJOINT";
+            circleLabelData = "The circles are DISJOINT";
         }
         if(xySqrt < radAdd){
-            labelData = "The circles OVERLAP";
+            circleLabelData = "The circles OVERLAP";
         }
         if(xySqrt < absRadDiff){
-            labelData = "The circles are INSIDE of each other";
+            circleLabelData = "The circles are INSIDE of each other";
+        }
+        if(xySqrt == radAdd ||  xySqrt == absRadDiff){
+            circleLabelData = "The circles TOUCH";
+            if((xySqrt <= circleInputs[2]) || (xySqrt <= circleInputs[5])){
+                circleLabelData = "The circles TOUCH, and are INSIDE each other";
+            }
+            else{
+                circleLabelData = "The circles TOUCH, and are OUTSIDE of each other";
+            }
+        }
+        if((circleInputs[0] == circleInputs[3]) && (circleInputs[1] == circleInputs[4]) && (circleInputs[2] == circleInputs[5])){
+            circleLabelData = "The circles are EQUAL";
         }
 
-        // CREATES CIRCLES
-        root = new Pane();
-        createCircle(circleInputs, labelData);//circleInputs[0], circleInputs[1], circleInputs[2], labelData);
-        //createCircle(circleInputs[3], circleInputs[4], circleInputs[5], labelData);
-        Scene scene = new Scene(root, 400, 400);
-        stage.setScene(scene);
-        stage.show();
-        stage.setTitle("CS5405 HW3");
-    }
-
-    public Circle createCircle(int[] circleInputs, String labelData){//int centerX, int centerY, int radius, String labelData){
-        Circle circle1 = new Circle();
-        circle1.setCenterX(circleInputs[0]);
-        circle1.setCenterY(circleInputs[1]);
-        circle1.setRadius(circleInputs[2]);
-        circle1.setStroke(Color.BLUE);
-        circle1.setFill(Color.CYAN);
-
-        Circle circle2 = new Circle();
-        circle2.setCenterX(circleInputs[3]);
-        circle2.setCenterY(circleInputs[4]);
-        circle2.setRadius(circleInputs[5]);
-        circle2.setStroke(Color.RED);
-        circle2.setFill(Color.PINK);
-
-        // NEED TO SEE IF I CAN DELETE LABEL FROM HERE
-        Label label = new Label(labelData);
-        root.getChildren().addAll(circle1,circle2,label);
-        return circle1;
-
-    }
-}
-*/
-import javafx.stage.Stage;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.control.Button;
-import javafx.application.Application;
-//actions items
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-//paint and othe useful classes
-import javafx.scene.paint.Color;
-import javafx.scene.text.*;//Font,FontWeight,FontPosture,TextAlignment
-//Textalignment
-
-/**
- *
- * @author Chaman Sabharwal
- */
-import javafx.scene.text.*;
-
-public class Demo extends Application {
-
-    Pane root = new Pane();
-
-    Pane authorPane = new Pane();
-    Button authorButton;
-    Text authorText1;
-
-    Pane descriptionPane = new Pane();
-    Button descriptionButton;
-    Text descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6;
-
-    Pane problemPane = new Pane();
-    Button problemButton;
-    Text problemText1;
-
-    Pane circlePane = new Pane();
-    Button circleButton;
-    Text circleText1;
-
-    Scene scene;
-    Stage stage;
-
-    public void start(Stage stage) {
 	    root = createFrontPage();
         scene = new Scene(root,700,600,Color.GRAY);
         stage.setTitle("CS5405 HW4");
@@ -150,11 +107,24 @@ public class Demo extends Application {
         stage.show();
     }
     
-    public Pane createFrontPage()
-    {
-        authorText1 = new Text(10, 100, "Author1");
-        authorText1.setText("Alfonso Miguel Pascual Santos-Tankia");
-        
+    public Pane createFrontPage(){
+        authorText1 = new Text(10,100, "Author1");
+        authorText1.setText("Demonstration of Assignment for\nJava GUI and Visualitzation: CS5405");
+        authorText1.setFill(Color.RED);
+        authorText1.setTextAlignment(TextAlignment.CENTER);
+        authorText1.setWrappingWidth(500);
+        authorText2 = new Text(10, 150, "Author2");
+        authorText2.setText("Presented by:\nAlfonso Miguel Pascual Santos-Tankia\nEmail: apsdr3@mst.edu\nStudent ID: 12432809");
+        authorText2.setFill(Color.GREEN);
+        authorText2.setFont(new Font(20));
+        authorText2.setTextAlignment(TextAlignment.CENTER);
+        authorText2.setWrappingWidth(500);
+        authorText3 = new Text(10, 270, "Author3");
+        authorText3.setText("This is my original Code, no IDE used in the submission.\nI did not give my code to anyone or use anyone's code in this work");
+        authorText3.setFill(Color.BLUE);
+        authorText3.setTextAlignment(TextAlignment.CENTER);
+        authorText3.setWrappingWidth(500);
+
         descriptionText1 = new Text(10, 100, "Description1");
         descriptionText1.setText("CS5405HW04(Due Thursday October04, 2018, 11:00A.M.)\nHW will not be graded if submitted after 11:00AM.");
         descriptionText1.setFill(Color.RED);
@@ -167,30 +137,40 @@ public class Demo extends Application {
         descriptionText4 = new Text(10, 240, "Description4");
         descriptionText4.setText("(Hint: root pane contains buttons and a pane1  You can create any more panes in a pane1.\nCreate pane2 for Author , pane3 for problem Description, pane4 for problems encountered,\npane 5 for Demos, on button click, remove the current pane, and add new pane. It was explained in the class.");
         descriptionText4.setFill(Color.BLUE);
-        descriptionText5 = new Text(10, 290, "Description5");
+        descriptionText5 = new Text(10, 310, "Description5");
         descriptionText5.setText("Deliverables");
         descriptionText5.setFill(Color.BLUE);
-        descriptionText6 = new Text(10.305, "Description6");
+        descriptionText6 = new Text(10, 325, "Description6");
         descriptionText6.setText("\t[5] Name the program: Demo.java, manifest file: Demo.txt, jar file Demo.jar\n\t[5] source directory will include all .java files and Demo.txt file,\n\tcode directory will have .class files,\n\tdata directory will have inFile.txt file for data\n\tall of CWD (source, code, data directories) will be jarred into executable .jar file.");
         descriptionText6.setFill(Color.BLUE);
-        /*Canvas: Upload only Demo.jar file containing everything in CWD related to the program 
-Class:  Sample of program execution and source code in the class.
-Note feel free to use anything in handouts or what was discussed in the class
-Maintain the honor code, refrain from copying or giving your code to anyone.
-*/
-
-
+        descriptionText7 = new Text(10, 410, "Description7");
+        descriptionText7.setText("Canvas: Upload only Demo.jar file containing everything in CWD related to the program\nClass:  Sample of program execution and source code in the class.\nNote feel free to use anything in handouts or what was discussed in the class\nMaintain the honor code, refrain from copying or giving your code to anyone.");
+        descriptionText7.setFill(Color.BLUE);
 
         problemText1 = new Text(10, 100, "Problem1");
         problemText1.setText("I did not have any problems working on this homework.");
 
-        circleText1 = new Text(10, 100, "Circles1");
-        circleText1.setText("Insert HW3 code here");
+        //INSERT CIRCLE TEXT HERE!
+        circleText1 = new Text(10, 50, "Circles1");
+        circleText1.setText(circleLabelData);
+        // CREATES CIRCLES
+        Circle circle1 = new Circle();
+        circle1.setCenterX(circleInputs[0]);
+        circle1.setCenterY(circleInputs[1]);
+        circle1.setRadius(circleInputs[2]);
+        circle1.setStroke(Color.BLUE);
+        circle1.setFill(Color.CYAN);
+        Circle circle2 = new Circle();
+        circle2.setCenterX(circleInputs[3]);
+        circle2.setCenterY(circleInputs[4]);
+        circle2.setRadius(circleInputs[5]);
+        circle2.setStroke(Color.RED);
+        circle2.setFill(Color.PINK);
 
-        authorPane.getChildren().addAll(authorText1);
-        descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6);
+        authorPane.getChildren().addAll(authorText1, authorText2, authorText3);
+        descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7);
         problemPane.getChildren().addAll(problemText1);
-        circlePane.getChildren().addAll(circleText1);
+        circlePane.getChildren().addAll(circleText1, circle1, circle2);
         
         authorPane.setLayoutX(10);
         authorPane.setLayoutY(50);
@@ -247,4 +227,5 @@ Maintain the honor code, refrain from copying or giving your code to anyone.
        
         return root;
     }
+
 }
