@@ -1,11 +1,11 @@
 // Name: Alfonso Miguel Santos-Tankia
 // Class: CS5405
 // Student ID: 12432809
-// HW3
+// HW4
 
 //Note: To compile:     javac -d . source/*.java
 //      To run:         java code.Demo
-//      To create .jar: jar -cvfm Demo.jar manifest.txt *
+//      To create .jar: jar -cvfm Demo.jar source/Demo.txt *
 //      To run .jar:    <Double click on Demo.jar>
 //      To run .jar:    java -jar Demo.jar
 
