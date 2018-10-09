@@ -53,6 +53,7 @@ public class Demo extends Application {
     String circleLabelData;
     int[] circleInputs;
 
+    @Override
     public void start(Stage stage){
         //GET Circle Information
         circleInputs = new int[6];
