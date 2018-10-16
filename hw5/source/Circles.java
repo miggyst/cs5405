@@ -16,12 +16,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.control.Button;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
+import javafx.scene.control.TextField;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,71 +46,21 @@ public class Circles extends Application {
 
     Pane circlePane = new Pane();
     Button circleButton;
-    Text circleText1;
-
-    Pane textFieldPane = new Pane();
-    Button textFieldButton;
-    //Text textFieldPane;
+    Text circleText1, circleText2, circleText3;
+    TextField circleTextField;
 
     Scene scene;
     Stage stage;
 
-    String circleLabelData;
-    int[][] circleInputs;
+    int[] circleInputs;
+    String circleLabelData = "";
+    Circle circle1, circle2;
 
     @Override
     public void start(Stage stage){
-        circleInputs = new int[8][6];
-        try{
-            File txtFile = new File("data/data.txt");
-            Scanner scan = new Scanner(txtFile);
-            int i = 0;
-            while(scan.hasNextLine()){
-                String[] line = (scan.nextLine()).split(" ");
-                for(int j = 0; j < 6; j++){
-                    circleInputs[i][j] = Integer.parseInt(line[j]);
-                    System.out.print(circleInputs[i][j] + " ");
-                }
-                System.out.println();
-                i++;
-            }
-        } catch (Exception e){
-            System.out.println("Error: " + e);
-        }
-
-        // CHECKS FOR DISJOINT, TOUCH, INSIDE, OR OVERLAP
-        int xDiff = circleInputs[0][0] - circleInputs[0][3];
-        int yDiff = circleInputs[0][1] - circleInputs[0][4];
-        double xySqrt = Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
-
-        int absRadDiff = Math.abs(circleInputs[0][2] - circleInputs[0][5]);
-        int radAdd = circleInputs[0][2] + circleInputs[0][5];
-
-        if(xySqrt > radAdd){
-            circleLabelData = "The circles are DISJOINT";
-        }
-        if(xySqrt < radAdd){
-            circleLabelData = "The circles OVERLAP";
-        }
-        if(xySqrt < absRadDiff){
-            circleLabelData = "The circles are INSIDE of each other";
-        }
-        if(xySqrt == radAdd ||  xySqrt == absRadDiff){
-            circleLabelData = "The circles TOUCH";
-            if((xySqrt <= circleInputs[0][2]) || (xySqrt <= circleInputs[0][5])){
-                circleLabelData = "The circles TOUCH, and are INSIDE each other";
-            }
-            else{
-                circleLabelData = "The circles TOUCH, and are OUTSIDE of each other";
-            }
-        }
-        if((circleInputs[0][0] == circleInputs[0][3]) && (circleInputs[0][1] == circleInputs[0][4]) && (circleInputs[0][2] == circleInputs[0][5])){
-            circleLabelData = "The circles are EQUAL";
-        }
-
-	    root = createFrontPage();
+        root = createFrontPage();
         scene = new Scene(root,700,700,Color.GRAY);
-        stage.setTitle("CS5405 HW4");
+        stage.setTitle("CS5405 HW5");
         stage.setScene(scene);
         stage.show();
     }
@@ -157,30 +108,29 @@ public class Circles extends Application {
         descriptionText8.setText("Using OOP, you may write JUST one method to analyze the two circles using  if…if else struture.\nThe output will be one of the eight possibilities.\nName the program: Circles.java, manifest file: Circles.txt, jar file Circles.jar. Jar file will include ONLY:\n\t[5]code: code directory will have .class files\n\t[5]source: source directory will have .java and .txt files,\n\t[5]data: data.txt file with eight test cases used to test the program (six numbers per line).");
         descriptionText8.setFill(Color.BLUE);
 
-        referenceText1 = new Text(10, 100, "Problem1");
-        referenceText1.setText("NEED TO ADD REFERENCE LIST!");
+        referenceText1 = new Text(10, 100, "Reference1");
+        referenceText1.setText("I did not use any external reference other than notes from class");
 
         //INSERT CIRCLE TEXT HERE!
+        circleTextField = new TextField("");
+        circleTextField.setOnAction(new TextFieldHandler());
         circleText1 = new Text(10, 50, "Circles1");
-        circleText1.setText(circleLabelData);
+        circleText1.setText("Circles Spatial Relations Demo");
+        circleText1.setFill(Color.RED);
+        circleText2 = new Text(10, 65, "Circles2");
+        circleText2.setText("Input Circles: x1 y1 r1 x2 y2 r2");
+        circleText3 = new Text(10, 80, "Circles3");
+        circleText3.setText(circleLabelData);
+
         // CREATES CIRCLES
-        Circle circle1 = new Circle();
-        circle1.setCenterX(circleInputs[0][0]);
-        circle1.setCenterY(circleInputs[0][1]);
-        circle1.setRadius(circleInputs[0][2]);
-        circle1.setStroke(Color.BLUE);
-        circle1.setFill(Color.CYAN);
-        Circle circle2 = new Circle();
-        circle2.setCenterX(circleInputs[0][3]);
-        circle2.setCenterY(circleInputs[0][4]);
-        circle2.setRadius(circleInputs[0][5]);
-        circle2.setStroke(Color.RED);
-        circle2.setFill(Color.PINK);
+        circle1 = new Circle();
+        circle2 = new Circle();
+        
 
         authorPane.getChildren().addAll(authorText1, authorText2, authorText3);
         descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8);
         referencePane.getChildren().addAll(referenceText1);
-        circlePane.getChildren().addAll(circleText1, circle1, circle2);
+        circlePane.getChildren().addAll(circleText1, circleText2, circleText3, circleTextField, circle1, circle2);
         
         authorPane.setLayoutX(10);
         authorPane.setLayoutY(50);
@@ -198,28 +148,25 @@ public class Circles extends Application {
         descriptionButton =  new Button("Description");
         referenceButton =  new Button("Reference");
         circleButton = new Button("Demo");
-        textFieldButton = new Button("TextField");
         
         authorButton.setLayoutX(100);
         authorButton.setLayoutY(20);
 
-        descriptionButton.setLayoutX(200);
+        descriptionButton.setLayoutX(250);
         descriptionButton.setLayoutY(20);
 
-        referenceButton.setLayoutX(300);
+        referenceButton.setLayoutX(400);
         referenceButton.setLayoutY(20);
 
-        circleButton.setLayoutX(400);
+        circleButton.setLayoutX(550);
         circleButton.setLayoutY(20);
 
-        textFieldButton.setLayoutX(500);
-        textFieldButton.setLayoutY(20);
         
         
-        root.getChildren().addAll(authorPane, authorButton, descriptionButton, referenceButton, circleButton, textFieldButton);
+        root.getChildren().addAll(authorPane, authorButton, descriptionButton, referenceButton, circleButton);
      
         authorButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, circlePane, textFieldPane);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, circlePane);
             root.getChildren().add(authorPane);
         });
        
@@ -238,13 +185,85 @@ public class Circles extends Application {
             root.getChildren().add(circlePane);
         });
 
-        textFieldButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, circlePane, textFieldPane);
-            root.getChildren().add(textFieldPane);
-        });
-        
-       
         return root;
+    }
+    
+
+    public class TextFieldHandler implements EventHandler<ActionEvent>{
+        public void handle(ActionEvent e){
+            circleInputs = new int[6];
+            String str = circleTextField.getText();
+            try{
+                String[] line = str.split(" ");
+                for(int i = 0; i < 6; i++){
+                    circleInputs[i] = Integer.parseInt(line[i]);
+                }
+                checkCircleStringOutput();
+                circleTextField.setText("");
+                circleText3.setText(circleLabelData);
+                circle1.setCenterX(circleInputs[0]);
+                circle1.setCenterY(circleInputs[1]);
+                circle1.setRadius(circleInputs[2]);
+                circle1.setStroke(Color.BLUE);
+                circle1.setFill(Color.CYAN);
+                circle1.setOpacity(0.8);
+                circle2.setCenterX(circleInputs[3]);
+                circle2.setCenterY(circleInputs[4]);
+                circle2.setRadius(circleInputs[5]);
+                circle2.setStroke(Color.RED);
+                circle2.setFill(Color.PINK);
+                circle2.setOpacity(0.8);
+            }catch(Exception f){
+                circleTextField.setText("");
+                circleText3.setText("Please input a valid string");
+            }
+        }
+    }
+
+    public void checkCircleStringOutput(){
+        int xDiff = circleInputs[0] - circleInputs[3];
+        int yDiff = circleInputs[1] - circleInputs[4];
+        double xySqrt = Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
+
+        int absRadDiff = Math.abs(circleInputs[2] - circleInputs[5]);
+        int radDiff1 = circleInputs[2] - circleInputs[5];
+        int radDiff2 = circleInputs[5] - circleInputs[2];
+        int radAdd = circleInputs[2] + circleInputs[5];
+
+        if(xySqrt >= radAdd){
+            if(xySqrt > radAdd){
+                circleLabelData = "The circles are DISJOINT";
+            }
+            else{
+                circleLabelData = "The circles TOUCH EXTERNALLY";
+            }
+        }
+        
+        if(xySqrt < radAdd){
+            circleLabelData = "The circles PROPERLY OVERLAP";
+        }
+
+        if(xySqrt <= radDiff2){
+            if(xySqrt < radDiff2){
+                circleLabelData = "circle1 is INSIDE and DOES NOT TOUCH circle2";
+            }
+            else{
+                circleLabelData = "circle1 is INSIDE and DOES TOUCH circle2";
+            }
+        }
+
+        if(xySqrt <= radDiff1){
+            if(xySqrt < radDiff1){
+                circleLabelData = "circle2 is INSIDE and DOES NOT TOUCH circle1";
+            }
+            else{
+                circleLabelData = "circle2 is INSIDE and DOES TOUCH circle1";
+            }
+        }
+
+        if((circleInputs[0] == circleInputs[3]) && (circleInputs[1] == circleInputs[4]) && (circleInputs[2] == circleInputs[5])){
+            circleLabelData = "The circles are IDENTICAL";
+        }
     }
 
 }
