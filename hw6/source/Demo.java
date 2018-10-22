@@ -22,6 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -42,7 +44,7 @@ public class Demo extends Application {
     Button descriptionButton;
     ImageView descriptionImageView;
     Image descriptionImage;
-    Text descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8;
+    Text descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8, descriptionText9;
 
     Pane referencePane = new Pane();
     Button referenceButton;
@@ -56,9 +58,8 @@ public class Demo extends Application {
     Scene scene;
     Stage stage;
 
-    int[] circleInputs;
     String circleLabelData = "";
-    Circle circle1, circle2;
+    Circle circle1, circle2, circle3;
 
     @Override
     public void start(Stage stage){
@@ -96,16 +97,18 @@ public class Demo extends Application {
         descriptionText3 = new Text(10, 80, "Description3");
         descriptionText3.setText("[50] This Homework is  Problem 14.9 page 587. This enforces your learning of color and shapes circle and arc.\nOnce you have a function for creating one fan, you can call it n times to create n fans.\nYou may make your display as fancy as possible, but stay within the confines of material what we covered\nin the class. Here is a sample of one fan. Take advantage of the course material covered so far.\nWrite is as generic as possible. You will be extending the HW in the next assigments.");
         descriptionText3.setFill(Color.BLUE);
-        //ADD IMAGE HERE!!!
         descriptionImageView = new ImageView();   
         descriptionImage = new Image("source/fan.png");
         descriptionImageView.setImage(descriptionImage);
-        //ADD IMAGE HERE!!
+        descriptionImageView.setFitHeight(120);
+        descriptionImageView.setFitWidth(120);
+        descriptionImageView.setX(150);
+        descriptionImageView.setY(150);
         descriptionText4 = new Text(10, 275, "Description4");
         descriptionText4.setText("Deliverables");
         descriptionText4.setFill(Color.BLUE);
         descriptionText5 = new Text(10, 290, "Description5");
-        descriptionText5.setText("\t[20]jar file works with correct program, works  on double click.\n\t[5]Place .java files in source directory, compiled byte code will be in “code” directory\n\t[5]Create a jar file Demo.jar containing the folders:source and code,the source directory has manifest file.");
+        descriptionText5.setText("\t[20]jar file works with correct program, works  on double click.\n\t[5]Place .java files in source directory, compiled byte code will be in \"code\" directory\n\t[5]Create a jar file Demo.jar containing the folders:source and code,the source directory has manifest file.");
         descriptionText5.setFill(Color.RED);
         descriptionText6 = new Text(10, 335, "Description6");
         descriptionText6.setText("\t[5]Upload  Demo.jar file to Canvas, do not turn it to me if you missed the due time on Canvas.\n\t[5]Bring to class a printed copy of java source code,a sample of program execution output of the program");
@@ -116,24 +119,19 @@ public class Demo extends Application {
         descriptionText8 = new Text(10, 440, "Descriptiopn8");
         descriptionText8.setText("Late Homework will not be accepted/graded by the grader.\nDo not ask for partial credit for turning in late, it will not happen. The grader has his own exams, classes,\ninterviews. He is not paid for grading the same work multiple times.  It is not at all fair to you or the grader\nto accept late work. You have a week to do it. If you have any questions ask me thursday.  It gives you time to ask\nquestion to do it on time. You may use any java code from the examples in the book or demos on the Canvas. ");
         descriptionText8.setFill(Color.BLUE);
+        descriptionText9 = new Text(10, 530, "Description9");
+        descriptionText9.setText("Check mark Self assessment\n\t[5] Does it have author page with correct description: name, email, phone, ownership copyright etc.\n\t[5] Does it have correct Problem Description\n\t[5] Does it have references. Sources are to be cited to make your work authentic and to give credit the original author(s). \n\t[20] Does it have a working correct Demo.jar file");
+        descriptionText9.setFill(Color.BLUE);
 
         referenceText1 = new Text(10, 100, "Reference1");
         referenceText1.setText("I did not use any external reference other than notes from class");
 
-        //INSERT CIRCLE TEXT HERE!
-        demoTextField = new TextField("");
-        demoTextField.setOnAction(new TextFieldHandler());
-        demoText1 = new Text(10, 50, "Circles1");
-        demoText1.setText("Circles Spatial Relations Demo");
-        demoText1.setFill(Color.RED);
-        demoText2 = new Text(10, 65, "Circles2");
-        demoText2.setText("Input Circles: x1 y1 r1 x2 y2 r2");
-        demoText3 = new Text(10, 80, "Circles3");
-        demoText3.setText(circleLabelData);
 
-        // CREATES CIRCLES
+        //NEED TO UPDATE!!
         circle1 = new Circle();
         circle2 = new Circle();
+        circle3 = new Circle();
+        makeFan(4);
         
         authorButton =  new Button("Author");
         descriptionButton =  new Button("Description");
@@ -143,9 +141,8 @@ public class Demo extends Application {
         root.getChildren().addAll(authorButton, descriptionButton, referenceButton, demoButton, authorPane);
 
         authorPane.getChildren().addAll(authorText1, authorText2, authorText3);
-        descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8, descriptionImageView);
+        descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8, descriptionText9, descriptionImageView);
         referencePane.getChildren().addAll(referenceText1);
-        demoPane.getChildren().addAll(demoText1, demoText2, demoText3, demoTextField, circle1, circle2);
         
         authorPane.setLayoutX(10);
         authorPane.setLayoutY(50);
@@ -193,83 +190,30 @@ public class Demo extends Application {
 
         return root;
     }
-    
 
-    public class TextFieldHandler implements EventHandler<ActionEvent>{
-        public void handle(ActionEvent e){
-            circleInputs = new int[6];
-            String str = demoTextField.getText();
-            try{
-                String[] line = str.split(" ");
-                for(int i = 0; i < 6; i++){
-                    circleInputs[i] = Integer.parseInt(line[i]);
-                }
-                checkCircleStringOutput();
-                demoTextField.setText("");
-                demoText3.setText(circleLabelData);
-                circle1.setCenterX(circleInputs[0]);
-                circle1.setCenterY(circleInputs[1]);
-                circle1.setRadius(circleInputs[2]);
-                circle1.setStroke(Color.BLUE);
-                circle1.setFill(Color.CYAN);
-                circle1.setOpacity(0.8);
-                circle2.setCenterX(circleInputs[3]);
-                circle2.setCenterY(circleInputs[4]);
-                circle2.setRadius(circleInputs[5]);
-                circle2.setStroke(Color.RED);
-                circle2.setFill(Color.PINK);
-                circle2.setOpacity(0.8);
-            }catch(Exception f){
-                demoTextField.setText("");
-                demoText3.setText("Please input a valid string");
-            }
+    public void makeFan(int numFanBlades){
+        circle1.setCenterX(150);
+        circle1.setCenterY(100);
+        circle1.setRadius(30);
+        circle1.setStroke(Color.PINK);
+        circle1.setFill(Color.BLUE);
+        circle2.setCenterX(150);
+        circle2.setCenterY(100);
+        circle2.setRadius(60);
+        circle2.setStroke(Color.PINK);
+        circle2.setFill(Color.PINK);
+        circle3.setCenterX(150);
+        circle3.setCenterY(100);
+        circle3.setRadius(90);
+        circle3.setStroke(Color.RED);
+        circle3.setFill(Color.WHITE);
+        demoPane.getChildren().addAll(circle3, circle2, circle1);
+        for(int i = 0; i < numFanBlades; i++){
+            int fanPlacement = (360/numFanBlades) * i;
+            Arc arc = new Arc(150, 100, 80, 80, fanPlacement, 35);
+            arc.setFill(Color.RED);
+            arc.setType(ArcType.ROUND);
+            demoPane.getChildren().add(arc);
         }
     }
-
-    public void checkCircleStringOutput(){
-        int xDiff = circleInputs[0] - circleInputs[3];
-        int yDiff = circleInputs[1] - circleInputs[4];
-        double xySqrt = Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
-
-        int absRadDiff = Math.abs(circleInputs[2] - circleInputs[5]);
-        int radDiff1 = circleInputs[2] - circleInputs[5];
-        int radDiff2 = circleInputs[5] - circleInputs[2];
-        int radAdd = circleInputs[2] + circleInputs[5];
-
-        if(xySqrt >= radAdd){
-            if(xySqrt > radAdd){
-                circleLabelData = "The circles are DISJOINT";
-            }
-            else{
-                circleLabelData = "The circles TOUCH EXTERNALLY";
-            }
-        }
-        
-        if(xySqrt < radAdd){
-            circleLabelData = "The circles PROPERLY OVERLAP";
-        }
-
-        if(xySqrt <= radDiff2){
-            if(xySqrt < radDiff2){
-                circleLabelData = "circle1 is INSIDE and DOES NOT TOUCH circle2";
-            }
-            else{
-                circleLabelData = "circle1 is INSIDE and DOES TOUCH circle2";
-            }
-        }
-
-        if(xySqrt <= radDiff1){
-            if(xySqrt < radDiff1){
-                circleLabelData = "circle2 is INSIDE and DOES NOT TOUCH circle1";
-            }
-            else{
-                circleLabelData = "circle2 is INSIDE and DOES TOUCH circle1";
-            }
-        }
-
-        if((circleInputs[0] == circleInputs[3]) && (circleInputs[1] == circleInputs[4]) && (circleInputs[2] == circleInputs[5])){
-            circleLabelData = "The circles are IDENTICAL";
-        }
-    }
-
 }
