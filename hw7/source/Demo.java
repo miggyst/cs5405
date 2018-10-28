@@ -56,18 +56,19 @@ public class Demo extends Application {
 
     Pane demoPane = new Pane();
     Button demoButton;
-    
-    boolean draw= true,    first=true,  notDone=true;
-    int x0 = 100, y0 = 100;
-    
-    Path path;
+    Path demoPath;
     LineTo lineTo = new LineTo();
     MoveTo moveTo = new MoveTo();
+    boolean demoCanDraw = true;
+    boolean demoStartPoint = true;
+    int xCoordinate = 0;
+    int yCoordinate = 0;
+    int demoCount = 0;
 
     @Override
     public void start(Stage stage){
         root = createFrontPage();
-        scene = new Scene(root,750,750,Color.GRAY);
+        scene = new Scene(root, 750, 750, Color.GRAY);
         stage.setTitle("CS5405 HW7");
         stage.setScene(scene);
         stage.show();
@@ -107,25 +108,25 @@ public class Demo extends Application {
         descriptionImageView1.setFitHeight(120);
         descriptionImageView1.setFitWidth(120);
         descriptionImageView1.setX(200);
-        descriptionImageView1.setY(185);
+        descriptionImageView1.setY(175);
         descriptionImageView2 = new ImageView();   
         descriptionImage2 = new Image("source/polyline2.png");
         descriptionImageView2.setImage(descriptionImage2);
         descriptionImageView2.setFitHeight(120);
         descriptionImageView2.setFitWidth(120);
         descriptionImageView2.setX(345);
-        descriptionImageView2.setY(185);
+        descriptionImageView2.setY(175);
 
-        descriptionText4 = new Text(10, 335, "Description4");
+        descriptionText4 = new Text(10, 305, "Description4");
         descriptionText4.setText("Deliverables Before you turn it in, check mark these things.");
         descriptionText4.setFill(Color.BLUE);
-        descriptionText5 = new Text(10, 350, "Description5");
-        descriptionText5.setText("\t[10] Do not use any IDs. This will ensure that you will lose points if you do not follow the guidelines.\nIt has been iterated and reiterated to refrain from such activity in this course.\n\t[10] jar file works with correctly with this assignment program, works  on double click.\n\t[5]  Name the program driver as Demo.java.\n\t[5]  Place .java files in source directory, compiled byte code will be in “code” directory\n\t[5]  The source directory has manifest file.\n\t[5]  Create one jar file Demo.jar containing the folders: source and code \n\t[5]  Upload  Demo.jar file to Canvas, do not turn it to me if you missed the due time on Canvas.\n\t[5]  Bring to class a printed copy of java source code, a sample of program execution output of the program\n\t[5]  Place this assignment description page on top of the printed copy for grade feedback. Write your name on it.\n\t[45] Program works correctly, use self documenting variables.");
+        descriptionText5 = new Text(10, 320, "Description5");
+        descriptionText5.setText("\t[5]\tUser interface buttons for Author, Problem description, References as usual.\n\t\tUpdate them for this assignment.\n\t[5]\tOnce two polylines are done, deactivate the mouse from drawing any more.\n\t[5]\tClear the drawing area except for buttons for interaction with the program.\n\t[10]\tDo not use any IDs. This will ensure that you will lose points if you do not follow the\n\t\tguidelines. It has been iterated and reiterated to refrain from such activity in this course.\n\t[10]\tAny files that are not needed in code and source directories must be removed.\n\t[10]\tjar file works with correctly with this assignment program, works  on double click.\n\t[5]\tName the program driver as Demo.java.\n\t[5]\tPlace .java files in source directory, compiled byte code will be in “code” directory\n\t[5]\tthe source directory has manifest file.\n\t[5]\tCreate one jar file named Demo.jar containing the folders: source and code \n\t[5]\tUpload  Demo.jar file to Canvas, do not turn it to me if you missed the due time on Canvas.\n\t[5]\tBring to class a printed copy of java source code, a sample of program execution output of the program\n\t[5]\tPrint this assignment description and place it on top of the printed copy for grade feedback. Write your name on it.\n\t[20]\tProgram works correctly, use self documenting variables.");
         descriptionText5.setFill(Color.RED);
-        descriptionText6 = new Text(10, 530, "Description6");
+        descriptionText6 = new Text(10, 570, "Description6");
         descriptionText6.setText("You will write your own code. If any sort of plagiarism occurs, guidelines were given in the class. Copying\nthe program will result in loss of ALL credit and will be reported to dept for proper credit. This is required by honor\ncode and the school of undergraduate/graduate studies.");
         descriptionText6.setFill(Color.BLUE);
-        descriptionText7 = new Text(10, 575, "Description7");
+        descriptionText7 = new Text(10, 630, "Description7");
         descriptionText7.setText("Late Homework will not be accepted/graded by the grader. Do not ask for partial credit for turning in late,\nit will not happen. The grader has his own exams, classes, interviews.  He is not paid for grading the same work\nmultiple times. It is not at all fair to you or the grader to accept late work. You have a week to do it. If you have any\nquestions ask me thursday.  It gives you time to ask question to do it on time inspite of it\nbeing discussed in the class before it is assigned.");
         descriptionText7.setFill(Color.BLUE);
 
@@ -168,91 +169,102 @@ public class Demo extends Application {
         demoButton.setLayoutY(20);
      
         authorButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane, path);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
             root.getChildren().add(authorPane);
         });
        
         descriptionButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane, path);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
             root.getChildren().add(descriptionPane);
         });
         
         referenceButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane, path);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
             root.getChildren().add(referencePane);
         });
 
         demoButton.setOnAction(ae->{
-            polylineDrawing();
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
             root.getChildren().add(demoPane);
+            if(demoCount < 2){
+                polylineDrawing();
+            }
         });
 
         return root;
     }
 
-    public void polylineDrawing()
-    {
-        // path initialization
-        path = new Path();
-        // add the required start point of the path
-        path.getElements().add(new MoveTo(x0,y0));
-        path.setStrokeWidth(2);
-        path.setStroke(Color.BLUE);
-        // mouse drawing, get the started
+    public void polylineDrawing(){
+        // Reset variables to be used 'n' times (in this case, just twice)
+        demoCanDraw = true;
+        demoStartPoint = true;
+
+        demoPath = new Path();
+        demoPath.getElements().add(new MoveTo(xCoordinate,yCoordinate));
+        demoPath.setStrokeWidth(3);
+        demoPath.setStroke(Color.BLUE);
+        if(demoCount%2 == 1){
+            demoPath.setStroke(Color.RED);
+        }
         scene.setOnMouseMoved(mouseHandler);
         scene.setOnMouseClicked(mouseEvent->{
-            // freeze the point and get to a new point
-            if (first)
-            { if (mouseEvent.getClickCount()==1)
-            {
-                first=false;
-                x0= (int) mouseEvent.getX();y0= (int) mouseEvent.getY();
-                //path.getElements().clear();
-                root.getChildren().remove(path);
-                lineTo.setX(x0);lineTo.setY(y0);
-                path = new Path();
-                path.getElements().add(new MoveTo(x0,y0));
-                
-                // path initialization
-                path.setStrokeWidth(2);
-                path.setStroke(Color.BLUE);
-                // add the start point of the path
-                root.getChildren().add(path);} }
-            else
-                if (mouseEvent.getClickCount()==1)
-                {   x0 = (int) mouseEvent.getX();
-                    y0 = (int) mouseEvent.getY();
-                    lineTo= new LineTo();
-                    lineTo.setX(x0);
-                    lineTo.setY(y0);
-                    moveTo.setX(x0);
-                    moveTo.setY(y0);
-                    if (draw)
-                    {   //path.getElements().add(moveTo);
-                        path.getElements().add(new LineTo(x0,y0));
+            if(demoStartPoint){
+                if (mouseEvent.getClickCount() == 1){
+                    demoStartPoint = false;
+                    xCoordinate = (int)mouseEvent.getX() - 10; // x coordinate offset due to pane sizing
+                    yCoordinate = (int)mouseEvent.getY() - 50; // y coordinate offset due to pane sizing
+
+                    demoPane.getChildren().remove(demoPath);
+                    lineTo.setX(xCoordinate);
+                    lineTo.setY(yCoordinate);
+                    demoPath = new Path();
+                    demoPath.getElements().add(new MoveTo(xCoordinate,yCoordinate));
+
+                    demoPath.setStrokeWidth(3);
+                    demoPath.setStroke(Color.BLUE);
+                    if(demoCount%2 == 1){
+                        demoPath.setStroke(Color.RED);
+                    }
+                    demoPane.getChildren().add(demoPath);
+                }
+            }
+            else{
+                if(mouseEvent.getClickCount() == 1){
+                    xCoordinate = (int)mouseEvent.getX() - 10; // x coordinate offset due to pane sizing
+                    yCoordinate = (int)mouseEvent.getY() - 50; // y coordinate offset due to pane sizing
+                    lineTo = new LineTo();
+                    lineTo.setX(xCoordinate);
+                    lineTo.setY(yCoordinate);
+                    moveTo.setX(xCoordinate);
+                    moveTo.setY(yCoordinate);
+                    if(demoCanDraw){
+                        demoPath.getElements().add(new LineTo(xCoordinate,yCoordinate));
                     }
                 }
-            
-            if (mouseEvent.getClickCount()>1)
-                draw=false;
-            //   notDone=false;
-        }  );
+            }
+            if (mouseEvent.getClickCount() > 1){
+                // only allows 'n' polylines (in this case it will just be 2 times)
+                demoCount++;
+                if(demoCount < 2){
+                    polylineDrawing();
+                }
+                else{
+                    demoCanDraw = false;
+                }
+            }
+        });
     }
     
-    EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>() {
+    EventHandler<MouseEvent> mouseHandler = new EventHandler<MouseEvent>(){
         @Override
-        public void handle(MouseEvent mouseEvent) {
-            double xMouseEventCoordinate = mouseEvent.getX();
-            double yMouseEventCoordinate = mouseEvent.getY();
-              if (draw)
-                    {
-                      //  lineTo= new LineTo(); creates line through every pixel.
-                        lineTo.setX(xMouseEventCoordinate);
-                        lineTo.setY(yMouseEventCoordinate);
-                        path.getElements().add(lineTo);
-                    }
+        public void handle(MouseEvent mouseEvent){
+            double xMouseEventCoordinate = mouseEvent.getX() - 10; // x coordinate offset due to pane sizing
+            double yMouseEventCoordinate = mouseEvent.getY() - 50; // y coordinate offset due to pane sizing
+            if(demoCanDraw){
+                lineTo.setX(xMouseEventCoordinate);
+                lineTo.setY(yMouseEventCoordinate);
+                demoPath.getElements().add(lineTo);
             }
- 
+        }
     };
 }
