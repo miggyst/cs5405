@@ -29,6 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.animation.Animation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,18 +57,18 @@ public class Demo extends Application {
 
     Pane demoPane = new Pane();
     Pane demoFanPane = new Pane();
-    Button demoButton;
-    Text demoText1, demoText2, demoText3;
+    Button demoButton, demoPauseButton, demoReverseButton;
+    Text demoText1, demoText2, demoText3, demoNumFanBladesSliderText, demoFanSpeedSliderText;
     TextField demoTextField;
+    Slider demoNumFanBladesSlider, demoFanSpeedSlider;
+    ImageView demoPauseButtonImageView, demoReverseButtonImageView;
+    Image demoPauseButtonImage, demoReverseButtonImage;
+    int numFanBlades;
+    Circle circle1, circle2, circle3;
     Arc demoArc;
-    Slider demoNumFanBladesSlider;
-    int numFanBlades = 4;
 
     Scene scene;
     Stage stage;
-
-    String circleLabelData = "";
-    Circle circle1, circle2, circle3;
 
     @Override
     public void start(Stage stage){
@@ -154,21 +155,29 @@ public class Demo extends Application {
         circle1 = new Circle();
         circle2 = new Circle();
         circle3 = new Circle();
-        circle1.setCenterX(250);
-        circle1.setCenterY(250);
-        circle1.setRadius(30);
-        circle1.setStroke(Color.PINK);
-        circle1.setFill(Color.BLUE);
-        circle2.setCenterX(250);
-        circle2.setCenterY(250);
-        circle2.setRadius(60);
-        circle2.setStroke(Color.PINK);
-        circle2.setFill(Color.PINK);
-        circle3.setCenterX(250);
-        circle3.setCenterY(250);
-        circle3.setRadius(90);
-        circle3.setStroke(Color.RED);
-        circle3.setFill(Color.WHITE);
+        makeFan(0);
+        // Pause Button
+        demoPauseButtonImageView = new ImageView();   
+        demoPauseButtonImage = new Image("images/pauseButton.png");
+        demoPauseButtonImageView.setImage(demoPauseButtonImage);
+        demoPauseButtonImageView.setFitHeight(100);
+        demoPauseButtonImageView.setFitWidth(100);
+        demoPauseButton = new Button();
+        demoPauseButton.setGraphic(demoPauseButtonImageView);
+        demoPauseButton.setLayoutX(50);
+        demoPauseButton.setLayoutY(10);
+        // Reverse Button
+        demoReverseButtonImageView = new ImageView();   
+        demoReverseButtonImage = new Image("images/reverseButton.png");
+        demoReverseButtonImageView.setImage(demoReverseButtonImage);
+        demoReverseButtonImageView.setFitHeight(100);
+        demoReverseButtonImageView.setFitWidth(100);
+        demoReverseButton = new Button();
+        demoReverseButton.setGraphic(demoReverseButtonImageView);
+        demoReverseButton.setLayoutX(200);
+        demoReverseButton.setLayoutY(10);
+        // Number of Fan Blade Slider
+        demoNumFanBladesSliderText = new Text(425, 20, "Slider to Adjust Number of Fan Blades");
         demoNumFanBladesSlider = new Slider(0, 15, 0);
         demoNumFanBladesSlider.setMaxSize(300, 200);
         demoNumFanBladesSlider.setMajorTickUnit(1);
@@ -181,10 +190,34 @@ public class Demo extends Application {
         demoNumFanBladesSlider.setLayoutY(50);
         demoNumFanBladesSlider.setScaleX(2);
         demoNumFanBladesSlider.setScaleY(2);
+        // Animation Speed of Fan Slider
+        demoFanSpeedSliderText = new Text(200, 400, "Slider to Adjust Fan Speed");
+        demoFanSpeedSlider = new Slider(0, 15, 0);
+        demoFanSpeedSlider.setMaxSize(400, 600);
+        demoFanSpeedSlider.setMajorTickUnit(1);
+        demoFanSpeedSlider.setMinorTickCount(0);
+        demoFanSpeedSlider.setOrientation(Orientation.HORIZONTAL);
+        demoFanSpeedSlider.setSnapToTicks(true);
+        demoFanSpeedSlider.setShowTickLabels(true);
+        demoFanSpeedSlider.setShowTickMarks(true);
+        demoFanSpeedSlider.setLayoutX(200);
+        demoFanSpeedSlider.setLayoutY(430);
+        demoFanSpeedSlider.setScaleX(2);
+        demoFanSpeedSlider.setScaleY(2);
+        // On action listeners
         demoNumFanBladesSlider.valueProperty().addListener(ov->{
             demoFanPane.getChildren().clear();
             numFanBlades = (int) demoNumFanBladesSlider.getValue();
             makeFan(numFanBlades);
+        });
+        demoFanSpeedSlider.valueProperty().addListener(ov->{
+            // DO SOMETHING
+        });
+        demoPauseButton.setOnAction(ae->{
+            System.out.println("Pause Button has been clicked");
+        });
+        demoReverseButton.setOnAction(ae->{
+            System.out.println("Reverse Button has been clicked");
         });
         
         //----- PANE SETUP -----//
@@ -198,7 +231,7 @@ public class Demo extends Application {
         authorPane.getChildren().addAll(authorText1, authorText2, authorText3, authorImageView);
         descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8, descriptionText9, descriptionText10, descriptionText11, descriptionImageView);
         referencePane.getChildren().addAll(referenceText1);
-        demoPane.getChildren().addAll(circle3, circle2, circle1, demoNumFanBladesSlider);
+        demoPane.getChildren().addAll(circle3, circle2, circle1, demoNumFanBladesSlider, demoNumFanBladesSliderText, demoPauseButton, demoReverseButton, demoFanSpeedSlider, demoFanSpeedSliderText);
         
         authorPane.setLayoutX(10);
         authorPane.setLayoutY(50);
