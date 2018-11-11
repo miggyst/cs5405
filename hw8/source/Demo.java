@@ -30,6 +30,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.animation.Animation;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
+import javafx.util.Duration;
+import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,6 +68,7 @@ public class Demo extends Application {
     Slider demoNumFanBladesSlider, demoFanSpeedSlider;
     ImageView demoPauseButtonImageView, demoReverseButtonImageView;
     Image demoPauseButtonImage, demoReverseButtonImage;
+    RotateTransition demoRotateTransition;
     int numFanBlades;
     Circle circle1, circle2, circle3;
     Arc demoArc;
@@ -211,7 +217,14 @@ public class Demo extends Application {
             makeFan(numFanBlades);
         });
         demoFanSpeedSlider.valueProperty().addListener(ov->{
-            // DO SOMETHING
+            // NEED TO FIND OUT HOW TO MAKE IT ROTATE IN PLACE!
+            demoRotateTransition = new RotateTransition(Duration.seconds(1), demoFanPane);
+            //demoRotateTransition.setAxis(new Point3D(10, 50, 0));
+            demoRotateTransition.setByAngle(360);
+            //demoRotateTransition.setRate(10);
+            demoRotateTransition.setCycleCount(3);
+            //System.out.println(demoRotateTransition.getAxis());
+            demoRotateTransition.play();
         });
         demoPauseButton.setOnAction(ae->{
             System.out.println("Pause Button has been clicked");
@@ -242,10 +255,11 @@ public class Demo extends Application {
         referencePane.setLayoutX(10);
         referencePane.setLayoutY(50);
 
+        //demoPane.setAlignment(demoFanPane, Pos.CENTER);
         demoPane.setLayoutX(10);
         demoPane.setLayoutY(50);
-        demoFanPane.setLayoutX(10);
-        demoFanPane.setLayoutY(50);
+        demoFanPane.setLayoutX(180);
+        demoFanPane.setLayoutY(220);
         
         authorButton.setLayoutX(100);
         authorButton.setLayoutY(20);
@@ -298,11 +312,11 @@ public class Demo extends Application {
         circle3.setRadius(90);
         circle3.setStroke(Color.RED);
         circle3.setFill(Color.WHITE);
-        //demoPane.getChildren().addAll(circle1, circle2, circle3);
         for(int i = 0; i < numFanBlades; i++){
             int fanPlacement = (360/numFanBlades) * i;
             int fanBladeLength = 20;
-            demoArc = new Arc(250, 250, 80, 80, fanPlacement, fanBladeLength);
+            // centerX and centerY value of 80 is used to offset offcenter Pane (Now the arcs are in the middle of the Pane, so that when the Pane rotates, it rotates properly)
+            demoArc = new Arc(80, 80, 80, 80, fanPlacement, fanBladeLength);
             demoArc.setFill(Color.RED);
             demoArc.setType(ArcType.ROUND);
             demoFanPane.getChildren().add(demoArc);
