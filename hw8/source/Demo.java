@@ -69,7 +69,8 @@ public class Demo extends Application {
     ImageView demoPauseButtonImageView, demoReverseButtonImageView;
     Image demoPauseButtonImage, demoReverseButtonImage;
     RotateTransition demoRotateTransition;
-    int numFanBlades;
+    int numFanBlades, rotationDirection = 360;
+    boolean rotationPause = true;
     Circle circle1, circle2, circle3;
     Arc demoArc;
 
@@ -158,6 +159,9 @@ public class Demo extends Application {
         referenceText1.setText("I did not use any external reference other than notes from class");
 
         //----- DEMO & DEMOFAN PANE -----//
+        demoRotateTransition = new RotateTransition(Duration.seconds(15), demoFanPane);
+        demoRotateTransition.setByAngle(rotationDirection);
+        demoRotateTransition.setCycleCount(Animation.INDEFINITE);
         circle1 = new Circle();
         circle2 = new Circle();
         circle3 = new Circle();
@@ -217,20 +221,24 @@ public class Demo extends Application {
             makeFan(numFanBlades);
         });
         demoFanSpeedSlider.valueProperty().addListener(ov->{
-            // NEED TO FIND OUT HOW TO MAKE IT ROTATE IN PLACE!
-            demoRotateTransition = new RotateTransition(Duration.seconds(1), demoFanPane);
-            //demoRotateTransition.setAxis(new Point3D(10, 50, 0));
-            demoRotateTransition.setByAngle(360);
-            //demoRotateTransition.setRate(10);
-            demoRotateTransition.setCycleCount(3);
-            //System.out.println(demoRotateTransition.getAxis());
+            int rateValue = (int) demoFanSpeedSlider.getValue();
+            demoRotateTransition.setRate(rateValue);
             demoRotateTransition.play();
         });
         demoPauseButton.setOnAction(ae->{
-            System.out.println("Pause Button has been clicked");
+            rotationPause = !rotationPause;
+            if(rotationPause){
+                demoRotateTransition.play();
+            }
+            else{
+                demoRotateTransition.pause();
+            }
         });
         demoReverseButton.setOnAction(ae->{
-            System.out.println("Reverse Button has been clicked");
+            demoRotateTransition.stop();
+            rotationDirection = rotationDirection*-1;
+            demoRotateTransition.setByAngle(rotationDirection);
+            demoRotateTransition.play();
         });
         
         //----- PANE SETUP -----//
