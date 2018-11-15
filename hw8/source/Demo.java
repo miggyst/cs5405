@@ -320,14 +320,39 @@ public class Demo extends Application {
         circle3.setRadius(90);
         circle3.setStroke(Color.RED);
         circle3.setFill(Color.WHITE);
-        for(int i = 0; i < numFanBlades; i++){
-            int fanPlacement = (360/numFanBlades) * i;
-            int fanBladeLength = 20;
-            // centerX and centerY value of 80 is used to offset offcenter Pane (Now the arcs are in the middle of the Pane, so that when the Pane rotates, it rotates properly)
-            demoArc = new Arc(80, 80, 80, 80, fanPlacement, fanBladeLength);
-            demoArc.setFill(Color.RED);
-            demoArc.setType(ArcType.ROUND);
-            demoFanPane.getChildren().add(demoArc);
+        if(numFanBlades == 1 || numFanBlades == 2){
+            if(numFanBlades == 1){
+                demoArc = new Arc(80, 15, 80, 80, 0, 20);
+                demoArc.setFill(Color.RED);
+                demoArc.setType(ArcType.ROUND);
+                demoFanPane.getChildren().add(demoArc);
+                //offset
+                demoFanPane.relocate(180, 285);
+            }else{
+                for(int i = 0; i < numFanBlades; i++){
+                    int fanPlacement = (360/numFanBlades) * i;
+                    int fanBladeLength = 20;
+                    // centerX and centerY value of 80 is used to offset offcenter Pane (Now the arcs are in the middle of the Pane, so that when the Pane rotates, it rotates properly)
+                    demoArc = new Arc(80, 30, 80, 80, fanPlacement, fanBladeLength);
+                    demoArc.setFill(Color.RED);
+                    demoArc.setType(ArcType.ROUND);
+                    demoFanPane.getChildren().add(demoArc);
+                }
+                // offset
+                demoFanPane.relocate(180, 270);
+            }
+        }else{
+            for(int i = 0; i < numFanBlades; i++){
+                int fanPlacement = (360/numFanBlades) * i;
+                int fanBladeLength = 20;
+                // centerX and centerY value of 80 is used to offset offcenter Pane (Now the arcs are in the middle of the Pane, so that when the Pane rotates, it rotates properly)
+                demoArc = new Arc(80, 80, 80, 80, fanPlacement, fanBladeLength);
+                demoArc.setFill(Color.RED);
+                demoArc.setType(ArcType.ROUND);
+                demoFanPane.getChildren().add(demoArc);
+            }
+            // offset
+            demoFanPane.relocate(180, 220);
         }
     }
 }
