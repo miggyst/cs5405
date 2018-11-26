@@ -66,6 +66,9 @@ public class Demo extends Application {
     ComboBox audioComboBox;
     Text audioDemoText1;
     boolean audioPlayPause = false;
+    MediaPlayer audioMediaPlayer;
+    MediaView audioMediaView;
+    int audioCount = 0;
 
     Pane videoDemoPane = new Pane();
     Button videoDemoButton, videoDemoPlayPauseButton;
@@ -157,6 +160,23 @@ public class Demo extends Application {
         }
         audioComboBox.setLayoutX(10);
         audioComboBox.setLayoutY(65);
+        audioComboBox.setOnAction(e->{
+            if(audioCount > 0){// stops the old audio from playing then removes the player to be replaced by a new video
+                audioMediaPlayer.pause();
+            }
+            audioDemoPane.getChildren().remove(audioMediaView);
+
+            String comboBoxStringPath = "audios/" + audioComboBox.getValue();
+            File audioFile = new File(comboBoxStringPath);
+            Media audioMedia = new Media(audioFile.toURI().toString());
+            audioMediaPlayer = new MediaPlayer(audioMedia);
+            audioMediaView = new MediaView(audioMediaPlayer);
+            audioDemoPane.getChildren().add(audioMediaView);
+
+            // add switching audio stuff
+            audioCount++;
+            audioPlayPause = false;
+        });
         // Button for play/pause
         audioDemoPlayPauseButton = new Button();
         ImageView audioDemoImageView = new ImageView(new Image("images/playpause.png"));
@@ -168,6 +188,11 @@ public class Demo extends Application {
         audioDemoPlayPauseButton.setOnAction(ae->{
             //play or pause music
             audioPlayPause = !audioPlayPause;
+            if(audioPlayPause){ // play
+                audioMediaPlayer.play();
+            }else{
+                audioMediaPlayer.pause();
+            }
         });
 
 
@@ -193,9 +218,6 @@ public class Demo extends Application {
 
                 String listViewStringPath = "videos/" + videoListView.getSelectionModel().getSelectedItem();
                 File videoFile = new File(listViewStringPath);
-                
-                //System.out.println(videoFile.getName());
-                
                 Media videoMedia = new Media(videoFile.toURI().toString());
                 videoMediaPlayer = new MediaPlayer(videoMedia);
                 videoMediaView = new MediaView(videoMediaPlayer);
@@ -275,26 +297,66 @@ public class Demo extends Application {
         videoDemoButton.setLayoutY(20);
      
         authorButton.setOnAction(ae->{
+            if(audioCount > 0){ // play
+                audioMediaPlayer.pause();
+                audioPlayPause = false;
+            }
+            if(videoCount > 0){ // play
+                videoMediaPlayer.pause();
+                videoPlayPause = false;
+            }
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(authorPane);
         });
        
         descriptionButton.setOnAction(ae->{
+            if(audioCount > 0){ // play
+                audioMediaPlayer.pause();
+                audioPlayPause = false;
+            }
+            if(videoCount > 0){ // play
+                videoMediaPlayer.pause();
+                videoPlayPause = false;
+            }
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(descriptionPane);
         });
         
         referenceButton.setOnAction(ae->{
+            if(audioCount > 0){ // play
+                audioMediaPlayer.pause();
+                audioPlayPause = false;
+            }
+            if(videoCount > 0){ // play
+                videoMediaPlayer.pause();
+                videoPlayPause = false;
+            }
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(referencePane);
         });
 
         audioDemoButton.setOnAction(ae->{
+            if(audioCount > 0){ // play
+                audioMediaPlayer.pause();
+                audioPlayPause = false;
+            }
+            if(videoCount > 0){ // play
+                videoMediaPlayer.pause();
+                videoPlayPause = false;
+            }
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(audioDemoPane);
         });
 
         videoDemoButton.setOnAction(ae->{
+            if(audioCount > 0){ // play
+                audioMediaPlayer.pause();
+                audioPlayPause = false;
+            }
+            if(videoCount > 0){ // play
+                videoMediaPlayer.pause();
+                videoPlayPause = false;
+            }
             root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(videoDemoPane);
         });
