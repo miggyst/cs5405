@@ -12,6 +12,7 @@
 package code;
 
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -33,7 +34,10 @@ import javafx.scene.control.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
+import java.nio.file.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -69,6 +73,9 @@ public class Demo extends Application {
     ListView<String> videoListView = new ListView<String>();
     Text videoDemoText1;
     boolean videoPlayPause = false;
+    MediaPlayer videoMediaPlayer;
+    MediaView videoMediaView;
+    int videoCount = 0;
 
     Scene scene;
     Stage stage;
@@ -176,6 +183,32 @@ public class Demo extends Application {
         videoListView.setPrefHeight(150);
         videoListView.setLayoutX(10);
         videoListView.setLayoutY(65);
+        videoListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(videoCount > 0){ // stops the old video from playing then removes the player to be replaced by a new video
+                    videoMediaPlayer.pause();
+                }
+                videoDemoPane.getChildren().remove(videoMediaView);
+
+                String listViewStringPath = "videos/" + videoListView.getSelectionModel().getSelectedItem();
+                File videoFile = new File(listViewStringPath);
+                
+                //System.out.println(videoFile.getName());
+                
+                Media videoMedia = new Media(videoFile.toURI().toString());
+                videoMediaPlayer = new MediaPlayer(videoMedia);
+                videoMediaView = new MediaView(videoMediaPlayer);
+                videoMediaView.setFitWidth(500); //1920x1080 scale
+                videoMediaView.setFitHeight(281.25);
+                videoMediaView.setLayoutX(100);
+                videoMediaView.setLayoutY(300);
+                videoDemoPane.getChildren().add(videoMediaView);
+
+                // aims to reset the field to allow the user to switch between videos
+                videoCount++;
+                videoPlayPause = false;
+        }});
         // Button for play/pause
         videoDemoPlayPauseButton = new Button();
         ImageView videoDemoImageView = new ImageView(new Image("images/playpause.png"));
@@ -187,6 +220,11 @@ public class Demo extends Application {
         videoDemoPlayPauseButton.setOnAction(ae->{
             //play or pause music
             videoPlayPause = !videoPlayPause;
+            if(videoPlayPause){ // play
+                videoMediaPlayer.play();
+            }else{
+                videoMediaPlayer.pause();
+            }
         });
 
 
