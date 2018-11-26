@@ -17,7 +17,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.control.Label;
@@ -27,6 +29,10 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,10 +56,19 @@ public class Demo extends Application {
     Button referenceButton;
     Text referenceText1;
 
-    Pane demoPane = new Pane();
-    Button demoButton;
-    Text demoText1, demoText2, demoText3;
-    TextField demoTextField;
+    Pane audioDemoPane = new Pane();
+    Button audioDemoButton, audioDemoPlayPauseButton;
+    File audioDirectory;
+    ComboBox audioComboBox;
+    Text audioDemoText1;
+    boolean audioPlayPause = false;
+
+    Pane videoDemoPane = new Pane();
+    Button videoDemoButton, videoDemoPlayPauseButton;
+    File videoDirectory;
+    ListView<String> videoListView = new ListView<String>();
+    Text videoDemoText1;
+    boolean videoPlayPause = false;
 
     Scene scene;
     Stage stage;
@@ -123,20 +138,73 @@ public class Demo extends Application {
         referenceText1 = new Text(10, 100, "Reference1");
         referenceText1.setText("I did not use any external reference other than notes from class");
 
-        //----- DEMO PANE -----//
-        //Write demo here
+        //----- AUDIO DEMO PANE -----//
+        // ComboBox
+        audioDemoText1 = new Text(10, 50, "AudioText1");
+        audioDemoText1.setText("Please choose a song from the COMBO BOX below");
+        audioComboBox = new ComboBox();
+        audioDirectory = new File("audios");
+        File[] audioFileList = audioDirectory.listFiles();
+        for(File audioFile:audioFileList){
+            audioComboBox.getItems().add(audioFile.getName());
+        }
+        audioComboBox.setLayoutX(10);
+        audioComboBox.setLayoutY(65);
+        // Button for play/pause
+        audioDemoPlayPauseButton = new Button();
+        ImageView audioDemoImageView = new ImageView(new Image("images/playpause.png"));
+        audioDemoImageView.setFitHeight(60);
+        audioDemoImageView.setFitWidth(60);
+        audioDemoPlayPauseButton.setGraphic(audioDemoImageView);
+        audioDemoPlayPauseButton.setLayoutX(450);
+        audioDemoPlayPauseButton.setLayoutY(50);
+        audioDemoPlayPauseButton.setOnAction(ae->{
+            //play or pause music
+            audioPlayPause = !audioPlayPause;
+        });
+
+
+        //----- VIDEO DEMO PANE -----//
+        videoDemoText1 = new Text(10, 50, "VideoText1");
+        videoDemoText1.setText("Please choose a video from the LIST VIEW below");
+        videoDirectory = new File("videos");
+        File[] videoFileList = videoDirectory.listFiles();
+        for(File videoFile:videoFileList){
+            videoListView.getItems().add(videoFile.getName());
+        }
+        videoListView.setPrefWidth(200);
+        videoListView.setPrefHeight(150);
+        videoListView.setLayoutX(10);
+        videoListView.setLayoutY(65);
+        // Button for play/pause
+        videoDemoPlayPauseButton = new Button();
+        ImageView videoDemoImageView = new ImageView(new Image("images/playpause.png"));
+        videoDemoImageView.setFitHeight(60);
+        videoDemoImageView.setFitWidth(60);
+        videoDemoPlayPauseButton.setGraphic(videoDemoImageView);
+        videoDemoPlayPauseButton.setLayoutX(450);
+        videoDemoPlayPauseButton.setLayoutY(50);
+        videoDemoPlayPauseButton.setOnAction(ae->{
+            //play or pause music
+            videoPlayPause = !videoPlayPause;
+        });
+
 
         //----- PANE SETUP -----//
         authorButton =  new Button("Author");
         descriptionButton =  new Button("Description");
         referenceButton =  new Button("Reference");
-        demoButton = new Button("Demo");
+        audioDemoButton = new Button("Audio");
+        videoDemoButton = new Button("Video");
 
-        root.getChildren().addAll(authorButton, descriptionButton, referenceButton, demoButton, authorPane);
+
+        root.getChildren().addAll(authorButton, descriptionButton, referenceButton, audioDemoButton, videoDemoButton, authorPane);
 
         authorPane.getChildren().addAll(authorText1, authorText2, authorText3, authorImageView);
         descriptionPane.getChildren().addAll(descriptionText1, descriptionText2, descriptionText3, descriptionText4, descriptionText5, descriptionText6, descriptionText7, descriptionText8);
         referencePane.getChildren().addAll(referenceText1);
+        audioDemoPane.getChildren().addAll(audioComboBox, audioDemoText1, audioDemoPlayPauseButton);
+        videoDemoPane.getChildren().addAll(videoListView, videoDemoText1, videoDemoPlayPauseButton);
         
         authorPane.setLayoutX(10);
         authorPane.setLayoutY(50);
@@ -147,39 +215,50 @@ public class Demo extends Application {
         referencePane.setLayoutX(10);
         referencePane.setLayoutY(50);
 
-        demoPane.setLayoutX(10);
-        demoPane.setLayoutY(50);
+        audioDemoPane.setLayoutX(10);
+        audioDemoPane.setLayoutY(50);
+
+        videoDemoPane.setLayoutX(10);
+        videoDemoPane.setLayoutY(50);
         
         authorButton.setLayoutX(100);
         authorButton.setLayoutY(20);
 
-        descriptionButton.setLayoutX(250);
+        descriptionButton.setLayoutX(220);
         descriptionButton.setLayoutY(20);
 
-        referenceButton.setLayoutX(400);
+        referenceButton.setLayoutX(340);
         referenceButton.setLayoutY(20);
 
-        demoButton.setLayoutX(550);
-        demoButton.setLayoutY(20);
+        audioDemoButton.setLayoutX(460);
+        audioDemoButton.setLayoutY(20);
+
+        videoDemoButton.setLayoutX(580);
+        videoDemoButton.setLayoutY(20);
      
         authorButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(authorPane);
         });
        
         descriptionButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(descriptionPane);
         });
         
         referenceButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
             root.getChildren().add(referencePane);
         });
 
-        demoButton.setOnAction(ae->{
-            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, demoPane);
-            root.getChildren().add(demoPane);
+        audioDemoButton.setOnAction(ae->{
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
+            root.getChildren().add(audioDemoPane);
+        });
+
+        videoDemoButton.setOnAction(ae->{
+            root.getChildren().removeAll(authorPane, descriptionPane, referencePane, audioDemoPane, videoDemoPane);
+            root.getChildren().add(videoDemoPane);
         });
 
         return root;
